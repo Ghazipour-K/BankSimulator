@@ -3,37 +3,46 @@ using System.Collections.Generic;
 
 namespace BankSimulator
 {
-     class Counter
+    class Counter
     {
         private readonly Queue<Customer> customers = new Queue<Customer>();
-        private int nextAvailableTime = 0;
-        public int TotalServiceTime { get; set; }
-        public int TotalRestTime { get; set; }
-        public int TotalNumberOfServedCustomers { get; set; }
+        private DateTime nextAvailableTime = default;
+        public ServiceTime ServiceTime { get; set; } //Must be moved to Bank class
+        public DateTime TotalServiceTime { get; set; }
+        public DateTime TotalRestTime { get; set; }
+        private int totalNumberOfServedCustomers = 0;
         public int QueueLength
         {
             get { return customers.Count; }
         }
 
 
-        public Counter() { TotalServiceTime = TotalRestTime = TotalNumberOfServedCustomers = 0; }
+        public Counter() { }
+
+        public int GetTotalNumberOfServedCustomers()
+        {
+            return totalNumberOfServedCustomers;
+        }
 
         public void Add(Customer customer)
         {
             customers.Enqueue(customer);
-            TotalNumberOfServedCustomers++;
+            totalNumberOfServedCustomers++;
         }
 
-        public void StartServing()
+        public void StartServing(DateTime clock)
         {
             nextAvailableTime = customers.Peek().ArrivalTime;
 
-            while (customers.Count > 0)
+            while (customers.Count > 0 && clock >= nextAvailableTime)
             {
+
                 var item = customers.Dequeue();
-                TotalServiceTime += item.ServiceTime;
-                item.ServiceStartTime = Math.Max(item.ArrivalTime, nextAvailableTime);
-                nextAvailableTime = item.ServiceStartTime + item.ServiceTime;//must test using Gant diagram
+                TimeSpan time = new TimeSpan();
+                TotalServiceTime.AddMinutes(item.ServiceTimeInMinutes);
+                ////TotalServiceTime += item.ServiceTime;
+                item.ServiceStartTime = (item.ArrivalTime >= nextAvailableTime) ? item.ArrivalTime : nextAvailableTime; // Math.Max(item.ArrivalTime, nextAvailableTime);
+                nextAvailableTime = item.ServiceStartTime.AddMinutes(item.ServiceTimeInMinutes);//must test using Gant diagram
                 //if(item.ArrivalTime<)
             }
             //Code to indicate Queue statistics goes here...

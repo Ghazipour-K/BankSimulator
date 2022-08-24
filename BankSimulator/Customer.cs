@@ -6,11 +6,11 @@ namespace BankSimulator
 
     class Customer
     {
-        public int ArrivalTime { get; set; }
-        public int ServiceTime { get; set; }
-        public int WaitingTime { get; set; }
-        public int ServiceStartTime { get; set; }
-        public int ExitTime { get; set; }
+        public DateTime ArrivalTime { get; set; }
+        public int ServiceTimeInMinutes { get; set; }
+        public DateTime WaitingTime { get; set; }
+        public DateTime ServiceStartTime { get; set; }
+        public DateTime ExitTime { get; set; }
         public bool GotServiceInLegalTime { get; set; }
 
         public Customer() { }
