@@ -6,9 +6,9 @@ namespace BankSimulator
     class Counter
     {
         private Queue<Customer> customerQueue = new Queue<Customer>();
-        private DateTime nextAvailableTime = default;
-        public int TotalServiceTime { get; set; }
-        public int TotalRestTime { get; set; }
+        private TimeSpan nextAvailableTime = default;
+        public TimeSpan TotalServiceTime { get; set; }
+        public TimeSpan TotalRestTime { get; set; }
         private int totalNumberOfServedCustomers = 0;
         public int QueueLength
         {
@@ -20,12 +20,13 @@ namespace BankSimulator
             Console.WriteLine("NumberOfCustomers: {0} - ServiceTime: {1} - RestTime: {2}", totalNumberOfServedCustomers, TotalServiceTime, TotalRestTime);
         }
 
-        public Counter(DateTime bankStartWorkingTime)
+        public Counter(ServiceTime bankWorkingTime)
         {
-            nextAvailableTime = bankStartWorkingTime;
+            TotalRestTime = bankWorkingTime.End - bankWorkingTime.Start;
+            nextAvailableTime = bankWorkingTime.Start;
         }
 
-        public void Update(DateTime clock)
+        public void Update(TimeSpan clock)
         {
             if (QueueLength > 0) ServeNextCustomer(clock);
         }
@@ -38,28 +39,31 @@ namespace BankSimulator
         public void Add(Customer customer)
         {
             customerQueue.Enqueue(customer);
-            totalNumberOfServedCustomers++;
-            nextAvailableTime.AddMinutes(customer.ServiceTimeInMinutes);
-            TotalServiceTime += customer.ServiceTimeInMinutes;
+            CalculateStatistics(customer);
         }
 
-        public void ServeNextCustomer(DateTime clock)
+        private void CalculateStatistics(Customer customer)
         {
+            totalNumberOfServedCustomers++;
+            nextAvailableTime = (customer.ArrivalTime >= nextAvailableTime) ? (customer.ArrivalTime + customer.ServiceTimeInMinutes) : (nextAvailableTime + customer.ServiceTimeInMinutes);
+            TotalServiceTime += customer.ServiceTimeInMinutes;
+            TotalRestTime -= TotalServiceTime;
+        }
 
+        public void ServeNextCustomer(TimeSpan clock)
+        {
             while (QueueLength > 0 && clock >= nextAvailableTime)
             {
-                Customer item = customerQueue.Dequeue();
-                item.ServiceStartTime = (item.ArrivalTime >= nextAvailableTime) ? item.ArrivalTime : nextAvailableTime; // Math.Max(item.ArrivalTime, nextAvailableTime);
-                item.ExitTime = item.ServiceStartTime.AddMinutes(item.ServiceTimeInMinutes);
-                item.WaitingTime = item.ExitTime.Subtract(item.ArrivalTime);
-                item.GotServiceInLegalTime = (item.ExitTime.Hour > 13) && (item.ExitTime.Minute > 0);
-                //nextAvailableTime = item.ServiceStartTime.AddMinutes(item.ServiceTimeInMinutes);//must test using Gant diagram
-                //if(item.ArrivalTime<)
+                Customer nextCustomer = customerQueue.Peek();
+                if (clock >= nextCustomer.ArrivalTime + nextCustomer.ServiceTimeInMinutes)
+                {
+                    Customer customer = customerQueue.Dequeue();
+                    customer.ServiceStartTime = (customer.ArrivalTime >= nextAvailableTime) ? customer.ArrivalTime : nextAvailableTime;
+                    customer.ExitTime = customer.ServiceStartTime + customer.ServiceTimeInMinutes;
+                    customer.WaitingTime = customer.ServiceStartTime.Subtract(customer.ArrivalTime);
+                    customer.GotServiceInLegalTime = (customer.ExitTime <= new TimeSpan(16, 0, 0));
+                }
             }
-            //Code to indicate Queue statistics goes here...
-            //TotalRestTime = TotalWorkTimeInMinute - TotalServiceTime;
         }
-
-
     }
 }

@@ -30,12 +30,12 @@ namespace BankSimulator
 
         static void Main(string[] args)
         {
-            int totalNumberOfCounters = 5, totalNumberOfCustomers = 20;
+            int totalNumberOfCounters = 3, totalNumberOfCustomers = 10;
             ServiceTime bankWorkingHours, customerServiceTime;
-            bankWorkingHours.Start = 7;
-            bankWorkingHours.End = 13;
-            customerServiceTime.Start = 3;
-            customerServiceTime.End = 30;
+            bankWorkingHours.Start = new TimeSpan(7, 0, 0);
+            bankWorkingHours.End = new TimeSpan(16, 0, 0);
+            customerServiceTime.Start = new TimeSpan(0, 3, 0);
+            customerServiceTime.End = new TimeSpan(0, 30, 0);
 
             Bank bank = new Bank(totalNumberOfCounters, totalNumberOfCustomers, bankWorkingHours, customerServiceTime);
 

@@ -1,20 +1,21 @@
 ﻿using System;
+using System.Globalization;
 
 namespace BankSimulator
 {
     class Bank
     {
-        private DateTime clock;
-        private ServiceTime bankWorkingHours;
+        private TimeSpan clock;
+        private ServiceTime bankWorkingTime;
         private ServiceTime customerServiceTime;
         private Customer[] customers;
         private Counter[] counters;
 
         public Bank(int totalNumberOfCounters, int totalNumberOfCustomers, ServiceTime bankWorkingHours, ServiceTime customerServiceTime)
         {
-            this.bankWorkingHours = bankWorkingHours;
+            this.bankWorkingTime = bankWorkingHours;
             this.customerServiceTime = customerServiceTime;
-            clock = bankWorkingHours.Start.ToDateTime();
+            clock = bankWorkingHours.Start;
             customers = new Customer[totalNumberOfCustomers];
             counters = new Counter[totalNumberOfCounters];
 
@@ -22,7 +23,7 @@ namespace BankSimulator
             GenerateCounterObjects();
         }
 
-        private void ApplyClockToCounters(DateTime clock)
+        private void ApplyClockToCounters(TimeSpan clock)
         {
             foreach (Counter counter in counters)
             {
@@ -38,7 +39,7 @@ namespace BankSimulator
             int index = 0;
             for (int i = 0; i < counters.Length; i++)
             {
-                if (counters[i].QueueLength > index) index = i;
+                if (counters[i].QueueLength < index) index = i;
             }
             return index;
         }
@@ -64,13 +65,16 @@ namespace BankSimulator
 
             for (int i = 0; i < customers.Length; i++)
             {
-                customers[i].ArrivalTime = new DateTime(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month,
-                    DateTime.Now.Day,
-                    random.Next(bankWorkingHours.Start, bankWorkingHours.End),//Generating Hour
-                    random.Next(60), 0);//Generating Minute
-                customers[i].ServiceTimeInMinutes = random.Next(customerServiceTime.Start, customerServiceTime.End + 1);
+
+                customers[i].ArrivalTime = new TimeSpan(
+                    random.Next(bankWorkingTime.Start.Hours, bankWorkingTime.End.Hours),//Generating Hour
+                    random.Next(60),//Generating Minute
+                    0);
+                //customers[i].ArrivalTime = DateTime.ParseExact(customers[i].ArrivalTime.ToString("yyyy/MM/dd HH:mm"));
+
+                //customers[i].ArrivalTime = DateTime.ParseExact(customers[i].ArrivalTime.ToString("yyyy/MM/dd HH:mm"), "yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture);
+                //DateTime.TryParseExact(customers[i].ArrivalTime.ToString(), "yyyy:MM:dd:HH:mm",);
+                customers[i].ServiceTimeInMinutes = new TimeSpan(0, random.Next(customerServiceTime.Start.Minutes, customerServiceTime.End.Minutes + 1), 0);
             }
         }
 
@@ -90,19 +94,19 @@ namespace BankSimulator
             }
         }
 
-        private void CalculateStatistics()
-        {
-            foreach (Counter counter in counters)
-            {
-                counter.TotalRestTime = (bankWorkingHours.End - bankWorkingHours.Start) * 60 - counter.TotalServiceTime;
-            }
-        }
+        //private void CalculateStatistics()
+        //{
+        //    foreach (Counter counter in counters)
+        //    {
+        //        counter.TotalRestTime = (new TimeSpan(0, (bankWorkingTime.End - bankWorkingTime.Start).Hours * 60, 0)) - counter.TotalServiceTime;
+        //    }
+        //}
         
         public void PrintSimulationInfo()
         {
             PrintCustomers();
             Console.WriteLine("-------------------------------------------------");
-            CalculateStatistics();
+            //CalculateStatistics();
             PrintCounters();
         }
 
@@ -123,7 +127,7 @@ namespace BankSimulator
         {
             for (int i = 0; i < counters.Length; i++)
             {
-                counters[i] = new Counter(bankWorkingHours.Start.ToDateTime());
+                counters[i] = new Counter(bankWorkingTime);
             }
         }
 

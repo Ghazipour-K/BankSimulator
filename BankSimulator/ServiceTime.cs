@@ -3,8 +3,8 @@ namespace BankSimulator
 {
     public struct ServiceTime
     {
-        public int Start;
-        public int End;
+        public TimeSpan Start;
+        public TimeSpan End;
     }
 
     //public struct WorkingTime
