@@ -9,24 +9,24 @@ namespace BankSimulator
     internal class Program
     {
 
-        private static void GetSimulationParametters(out ServiceTime bankWorkingHours, out ServiceTime customerServiceTime, out int totalNumberOfCounters, out int totalNumberOfCustomers)
-        {
-            Console.Write("Enter bank working hours range: ");
-            bankWorkingHours.Start = int.Parse(Console.ReadLine());
-            bankWorkingHours.End = int.Parse(Console.ReadLine());
+        //private static void GetSimulationParametters(out ServiceTime bankWorkingHours, out ServiceTime customerServiceTime, out int totalNumberOfCounters, out int totalNumberOfCustomers)
+        //{
+        //    Console.Write("Enter bank working hours range: ");
+        //    bankWorkingHours.Start = int.Parse(Console.ReadLine());
+        //    bankWorkingHours.End = int.Parse(Console.ReadLine());
 
-            Console.Write("Enter total number of counters: ");
-            totalNumberOfCounters = int.Parse(Console.ReadLine());
+        //    Console.Write("Enter total number of counters: ");
+        //    totalNumberOfCounters = int.Parse(Console.ReadLine());
 
-            Console.Write("Enter total number of customer: ");
-            totalNumberOfCustomers = int.Parse(Console.ReadLine());
+        //    Console.Write("Enter total number of customer: ");
+        //    totalNumberOfCustomers = int.Parse(Console.ReadLine());
 
-            Console.Write("Enter customer service time range  in minutes: ");
-            customerServiceTime.Start = int.Parse(Console.ReadLine());
-            customerServiceTime.End = int.Parse(Console.ReadLine());
-        }
+        //    Console.Write("Enter customer service time range  in minutes: ");
+        //    customerServiceTime.Start = int.Parse(Console.ReadLine());
+        //    customerServiceTime.End = int.Parse(Console.ReadLine());
+        //}
 
-        
+
 
         static void Main(string[] args)
         {
@@ -36,13 +36,13 @@ namespace BankSimulator
             bankWorkingHours.End = 13;
             customerServiceTime.Start = 3;
             customerServiceTime.End = 30;
-            
+
             Bank bank = new Bank(totalNumberOfCounters, totalNumberOfCustomers, bankWorkingHours, customerServiceTime);
 
             bank.GenerateTestCustomers();
             bank.SortCustomersByArrivalTime();
-            
-            bank.PrintCustomers();
+            bank.StartSimulation();
+            bank.PrintSimulationInfo();
 
             Console.ReadKey();
         }
