@@ -39,7 +39,7 @@ namespace BankSimulator
             int index = 0;
             for (int i = 0; i < counters.Length; i++)
             {
-                if (counters[i].QueueLength < index) index = i;
+                if (counters[i].QueueLength <= index) index = i;
             }
             return index;
         }

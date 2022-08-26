@@ -7,6 +7,7 @@ namespace BankSimulator
     {
         private Queue<Customer> customerQueue = new Queue<Customer>();
         private TimeSpan nextAvailableTime = default;
+        private TimeSpan firstAvailableTime = default;
         public TimeSpan TotalServiceTime { get; set; }
         public TimeSpan TotalRestTime { get; set; }
         private int totalNumberOfServedCustomers = 0;
@@ -23,6 +24,7 @@ namespace BankSimulator
         public Counter(ServiceTime bankWorkingTime)
         {
             TotalRestTime = bankWorkingTime.End - bankWorkingTime.Start;
+            firstAvailableTime = bankWorkingTime.Start;
             nextAvailableTime = bankWorkingTime.Start;
         }
 
@@ -58,10 +60,11 @@ namespace BankSimulator
                 if (clock >= nextCustomer.ArrivalTime + nextCustomer.ServiceTimeInMinutes)
                 {
                     Customer customer = customerQueue.Dequeue();
-                    customer.ServiceStartTime = (customer.ArrivalTime >= nextAvailableTime) ? customer.ArrivalTime : nextAvailableTime;
+                    customer.ServiceStartTime = (customer.ArrivalTime >= firstAvailableTime) ? customer.ArrivalTime : firstAvailableTime;
+                    firstAvailableTime= (customer.ArrivalTime >= firstAvailableTime) ? (customer.ArrivalTime + customer.ServiceTimeInMinutes) : (firstAvailableTime + customer.ServiceTimeInMinutes);
                     customer.ExitTime = customer.ServiceStartTime + customer.ServiceTimeInMinutes;
                     customer.WaitingTime = customer.ServiceStartTime.Subtract(customer.ArrivalTime);
-                    customer.GotServiceInLegalTime = (customer.ExitTime <= new TimeSpan(16, 0, 0));
+                    customer.GotServiceInLegalTime = (customer.ExitTime <= new TimeSpan(10, 0, 0));
                 }
             }
         }

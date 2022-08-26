@@ -31,13 +31,13 @@ namespace BankSimulator
         static void Main(string[] args)
         {
             int totalNumberOfCounters = 3, totalNumberOfCustomers = 10;
-            ServiceTime bankWorkingHours, customerServiceTime;
+            ServiceTime bankWorkingHours, customerServiceTimeRange;
             bankWorkingHours.Start = new TimeSpan(7, 0, 0);
-            bankWorkingHours.End = new TimeSpan(16, 0, 0);
-            customerServiceTime.Start = new TimeSpan(0, 3, 0);
-            customerServiceTime.End = new TimeSpan(0, 30, 0);
+            bankWorkingHours.End = new TimeSpan(10, 0, 0);
+            customerServiceTimeRange.Start = new TimeSpan(0, 3, 0);
+            customerServiceTimeRange.End = new TimeSpan(0, 30, 0);
 
-            Bank bank = new Bank(totalNumberOfCounters, totalNumberOfCustomers, bankWorkingHours, customerServiceTime);
+            Bank bank = new Bank(totalNumberOfCounters, totalNumberOfCustomers, bankWorkingHours, customerServiceTimeRange);
 
             bank.GenerateTestCustomers();
             bank.SortCustomersByArrivalTime();
