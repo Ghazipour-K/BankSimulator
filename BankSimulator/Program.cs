@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BankSimulator
 {
@@ -33,7 +30,7 @@ namespace BankSimulator
             int totalNumberOfCounters = 3, totalNumberOfCustomers = 10;
             ServiceTime bankWorkingHours, customerServiceTimeRange;
             bankWorkingHours.Start = new TimeSpan(7, 0, 0);
-            bankWorkingHours.End = new TimeSpan(10, 0, 0);
+            bankWorkingHours.End = new TimeSpan(9, 0, 0);
             customerServiceTimeRange.Start = new TimeSpan(0, 3, 0);
             customerServiceTimeRange.End = new TimeSpan(0, 30, 0);
 

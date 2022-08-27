@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 
 namespace BankSimulator
 {
@@ -37,10 +37,27 @@ namespace BankSimulator
         private int SelectNextCounter()
         {
             int index = 0;
+            int min = int.MaxValue;
+            List<int> list = new List<int>();
+            
+            //Find minimum length of all counters
             for (int i = 0; i < counters.Length; i++)
             {
-                if (counters[i].QueueLength <= index) index = i;
+                if (counters[i].QueueLength < min)
+                {
+                    min = counters[i].QueueLength;
+                }
             }
+
+            //Find counters with minimum 
+            for (int i = 0; i < counters.Length; i++)
+            {
+                if (counters[i].QueueLength == min) { list.Add(i); }
+            }
+
+            //Select and return a random counter among counters with minimum length
+            Random random = new Random();
+            index = list[random.Next(list.Count)];
             return index;
         }
 
@@ -56,7 +73,9 @@ namespace BankSimulator
 
         private void DispatchCustomer(Customer customer)
         {
-            counters[SelectNextCounter()].Add(customer);
+            int index = SelectNextCounter();
+            customer.AssignedCounterNo = index;
+            counters[index].Add(customer);
         }
 
         public void GenerateTestCustomers()
@@ -70,11 +89,8 @@ namespace BankSimulator
                     random.Next(bankWorkingTime.Start.Hours, bankWorkingTime.End.Hours),//Generating Hour
                     random.Next(60),//Generating Minute
                     0);
-                //customers[i].ArrivalTime = DateTime.ParseExact(customers[i].ArrivalTime.ToString("yyyy/MM/dd HH:mm"));
 
-                //customers[i].ArrivalTime = DateTime.ParseExact(customers[i].ArrivalTime.ToString("yyyy/MM/dd HH:mm"), "yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture);
-                //DateTime.TryParseExact(customers[i].ArrivalTime.ToString(), "yyyy:MM:dd:HH:mm",);
-                customers[i].ServiceTimeInMinutes = new TimeSpan(0, random.Next(customerServiceTime.Start.Minutes, customerServiceTime.End.Minutes + 1), 0);
+                customers[i].ServiceTime = new TimeSpan(0, random.Next(customerServiceTime.Start.Minutes, customerServiceTime.End.Minutes + 1), 0);
             }
         }
 
@@ -93,20 +109,11 @@ namespace BankSimulator
                 counter.PrintInfo();
             }
         }
-
-        //private void CalculateStatistics()
-        //{
-        //    foreach (Counter counter in counters)
-        //    {
-        //        counter.TotalRestTime = (new TimeSpan(0, (bankWorkingTime.End - bankWorkingTime.Start).Hours * 60, 0)) - counter.TotalServiceTime;
-        //    }
-        //}
         
         public void PrintSimulationInfo()
         {
             PrintCustomers();
             Console.WriteLine("-------------------------------------------------");
-            //CalculateStatistics();
             PrintCounters();
         }
 
