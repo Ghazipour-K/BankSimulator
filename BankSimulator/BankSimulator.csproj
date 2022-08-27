@@ -46,7 +46,6 @@
     <Compile Include="Bank.cs" />
     <Compile Include="Counter.cs" />
     <Compile Include="Customer.cs" />
-    <Compile Include="CustomerStruct.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceTime.cs" />
