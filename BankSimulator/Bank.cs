@@ -112,8 +112,10 @@ namespace BankSimulator
         
         public void PrintSimulationInfo()
         {
+            Console.WriteLine("Customers Info...\n");
             PrintCustomers();
             Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("Counters Info...\n");
             PrintCounters();
         }
 
